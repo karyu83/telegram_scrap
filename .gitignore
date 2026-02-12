@@ -1,0 +1,9 @@
+.env
+.claude/
+session/
+data/
+logs/
+__pycache__/
+*.pyc
+.pytest_cache/
+.coverage
