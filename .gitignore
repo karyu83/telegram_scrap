@@ -1,6 +1,10 @@
 .env
+.env.*
+!.env.example
 .claude/
 session/
+*.session
+test_connection.py
 data/
 logs/
 __pycache__/
