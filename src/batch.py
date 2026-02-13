@@ -1,3 +1,4 @@
+import asyncio
 import logging
 
 from src.batch_collector import collect_batch
@@ -24,3 +25,10 @@ async def run_batch(client, channels, metadata_path, data_dir="data"):
             results[alias] = 0
 
     return results
+
+
+async def run_periodic_batch(client, channels, metadata_path, data_dir="data", interval_sec=300):
+    while True:
+        await run_batch(client, channels, metadata_path=metadata_path, data_dir=data_dir)
+        logger.info("Next batch in %d seconds", interval_sec)
+        await asyncio.sleep(interval_sec)

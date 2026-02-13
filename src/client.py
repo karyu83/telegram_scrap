@@ -1,5 +1,8 @@
+import logging
+
 from telethon import TelegramClient
 
+logger = logging.getLogger(__name__)
 
 SESSION_DIR = "session"
 
@@ -12,3 +15,8 @@ def create_client(config):
         config["api_hash"],
     )
     return client
+
+
+async def start_client(client, phone):
+    await client.start(phone=phone)
+    logger.info("Client started with phone authentication")

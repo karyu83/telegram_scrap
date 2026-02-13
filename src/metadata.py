@@ -1,5 +1,8 @@
 import json
 import os
+import threading
+
+_lock = threading.Lock()
 
 
 def load_metadata(filepath):
@@ -18,16 +21,18 @@ def save_metadata(filepath, data):
 
 
 def update_channel(filepath, channel_alias, **kwargs):
-    data = load_metadata(filepath)
-    if channel_alias not in data:
-        data[channel_alias] = {}
-    data[channel_alias].update(kwargs)
-    save_metadata(filepath, data)
+    with _lock:
+        data = load_metadata(filepath)
+        if channel_alias not in data:
+            data[channel_alias] = {}
+        data[channel_alias].update(kwargs)
+        save_metadata(filepath, data)
 
 
 def increment_collected(filepath, channel_alias):
-    data = load_metadata(filepath)
-    if channel_alias not in data:
-        data[channel_alias] = {}
-    data[channel_alias]["total_collected"] = data[channel_alias].get("total_collected", 0) + 1
-    save_metadata(filepath, data)
+    with _lock:
+        data = load_metadata(filepath)
+        if channel_alias not in data:
+            data[channel_alias] = {}
+        data[channel_alias]["total_collected"] = data[channel_alias].get("total_collected", 0) + 1
+        save_metadata(filepath, data)

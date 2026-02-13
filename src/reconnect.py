@@ -1,3 +1,7 @@
+import logging
+
+logger = logging.getLogger(__name__)
+
 BASE_DELAY = 30
 MAX_DELAY = 300
 
@@ -17,9 +21,12 @@ class ReconnectManager:
 
     def record_failure(self):
         self.attempt += 1
+        delay = self.get_delay()
+        logger.warning("Connection failed (attempt %d), next retry in %ds", self.attempt, delay)
 
     def record_success(self):
         self.attempt = 0
+        logger.info("Successfully reconnected")
         if self._on_reconnect:
             self._on_reconnect()
 

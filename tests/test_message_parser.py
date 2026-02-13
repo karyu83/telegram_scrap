@@ -1,5 +1,6 @@
+import logging
 from datetime import datetime, timezone
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, PropertyMock
 
 from src.message_parser import parse_message
 
@@ -108,3 +109,34 @@ def test_parse_korean_text(mock_message):
     result = parse_message(mock_message, channel_alias="투자뉴스A")
 
     assert result["text"] == "삼성전자 목표가 상향 조정 🚀 매수 추천"
+
+
+def test_parse_includes_channel_id_and_alias(mock_message):
+    result = parse_message(mock_message, channel_alias="투자뉴스A")
+
+    assert result["channel_id"] == -1001234567890
+    assert result["channel_alias"] == "투자뉴스A"
+
+
+def test_parse_defaults_media_file_none_when_not_downloaded(mock_message):
+    mock_message.media = MagicMock()
+    mock_message.photo = MagicMock()
+    mock_message.video = None
+    mock_message.document = None
+
+    result = parse_message(mock_message, channel_alias="투자뉴스A")
+
+    assert result["media_file"] is None
+
+
+def test_parse_failure_logs_error_with_message_id(caplog):
+    broken_msg = MagicMock()
+    broken_msg.id = 99999
+    # date.isoformat() 호출 시 예외 발생
+    broken_msg.date.isoformat.side_effect = TypeError("not a datetime")
+
+    with caplog.at_level(logging.ERROR):
+        result = parse_message(broken_msg, channel_alias="에러채널")
+
+    assert result is None
+    assert "99999" in caplog.text

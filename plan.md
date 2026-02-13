@@ -141,6 +141,40 @@
 
 ---
 
+## Phase 5: PRD 정합성 보강 (누락 인수조건 보완)
+
+### 14. client.py / 인증 흐름 보강 (FR-01)
+
+- [x] 14-1. `test_first_run_starts_phone_auth_and_creates_session_file`: 최초 실행 시 전화번호 인증 흐름 시작 및 `session/` 세션 파일 생성
+- [x] 14-2. `test_reuses_existing_session_without_reauth`: 기존 세션 파일 존재 시 재인증 없이 연결
+
+### 15. batch.py / 주기 실행 보강 (FR-04)
+
+- [x] 15-1. `test_batch_interval_uses_configurable_seconds`: `BATCH_INTERVAL_SEC` 설정값으로 주기 실행 간격 적용 (기본 300초)
+
+### 16. message_parser.py / 파싱 예외 보강 (FR-05)
+
+- [x] 16-1. `test_parse_includes_channel_id_and_alias`: 파싱 결과에 `channel_id`, `channel_alias` 포함
+- [x] 16-2. `test_parse_defaults_media_file_none_when_not_downloaded`: 미디어 미저장 시 `media_file=None`
+- [x] 16-3. `test_parse_failure_logs_error_with_message_id`: 파싱 실패 시 에러 로그 + 원본 `message_id` 기록
+
+### 17. metadata.py / 무결성 보강 (FR-08)
+
+- [x] 17-1. `test_update_sets_last_collected_at_on_save_success`: 저장 성공 시 `last_collected_at` 갱신
+- [x] 17-2. `test_metadata_concurrent_writes_are_safe`: 동시 쓰기 상황에서 메타데이터 손상 없이 보존
+
+### 18. reconnect.py / 재연결 동작 보강 (FR-09)
+
+- [x] 18-1. `test_disconnect_waits_30_seconds_before_retry`: 연결 끊김 시 첫 재시도 전 30초 대기
+- [x] 18-2. `test_connection_state_changes_are_logged`: 연결 상태 변화 로그 기록
+
+### 19. logger.py / 운영 로그 시맨틱 보강 (FR-10)
+
+- [x] 19-1. `test_message_receive_and_store_logged_info`: 메시지 수신/저장 시 INFO 로그
+- [ ] 19-2. `test_errors_include_traceback`: 에러 로그에 traceback 포함
+
+---
+
 ## 작업 지침 (Agent 공통)
 
 ### 진행 절차
