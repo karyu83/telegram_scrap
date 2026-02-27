@@ -171,7 +171,7 @@
 ### 19. logger.py / 운영 로그 시맨틱 보강 (FR-10)
 
 - [x] 19-1. `test_message_receive_and_store_logged_info`: 메시지 수신/저장 시 INFO 로그
-- [ ] 19-2. `test_errors_include_traceback`: 에러 로그에 traceback 포함
+- [x] 19-2. `test_errors_include_traceback`: 에러 로그에 traceback 포함
 
 ---
 
@@ -215,3 +215,23 @@
 - 새 Agent가 작업을 이어받을 때: 이 파일에서 첫 번째 `[ ]` 항목을 찾아 그 항목부터 시작한다.
 - 이전 Agent가 생성한 소스/테스트 파일을 반드시 읽고 기존 패턴을 따른다.
 - `CLAUDE.md`의 TDD 원칙과 `PRD.md`의 요구사항을 함께 참조한다.
+---
+
+## Phase 6: Runtime Entry and Channel Automation
+
+### 20. channel_registry.py / channels.json add + dedupe
+
+- [x] 20-1. `test_add_channel_creates_channels_file_and_appends_entry`: create file when missing and append channel
+- [x] 20-2. `test_add_channel_rejects_duplicate_alias`: raise on duplicate alias
+- [x] 20-3. `test_add_channel_rejects_duplicate_username_or_id`: raise on duplicate username/id
+- [x] 20-4. `test_channel_cli_add_command_updates_file`: add channel through CLI command
+
+### 21. run.py / project run entry script
+
+- [x] 21-1. `test_run_realtime_builds_channel_map_and_starts_client`: resolve enabled channels and start realtime client
+- [x] 21-2. `test_run_batch_uses_configured_interval_and_metadata_path`: run batch mode with config interval/metadata path
+- [x] 21-3. `test_run_main_supports_mode_and_channels_file_args`: parse CLI args for mode/channels path
+
+### 22. main.py / module execution delegation
+
+- [x] 22-1. `test_main_module_entry_delegates_to_run_main`: `python -m src.main` delegates to run entrypoint

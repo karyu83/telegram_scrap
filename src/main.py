@@ -21,3 +21,9 @@ async def run_client(client, phone):
     await client.start(phone=phone)
     logger.info("Client connected, listening for messages...")
     await client.run_until_disconnected()
+
+
+if __name__ == "__main__":
+    from src.run import main as run_main
+
+    raise SystemExit(run_main())
