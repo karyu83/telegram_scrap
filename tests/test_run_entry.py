@@ -1,3 +1,4 @@
+import os
 import sys
 from unittest.mock import AsyncMock, MagicMock, patch
 
@@ -11,7 +12,7 @@ from src.run import run_batch_mode, run_realtime_mode, main
 
 @pytest.mark.asyncio
 async def test_run_realtime_builds_channel_map_and_starts_client():
-    config = {"phone": "+821012345678", "log_level": "INFO"}
+    config = {"phone": "+821012345678", "log_level": "INFO", "log_dir": "logs", "session_dir": "session"}
     enabled_channels = [{"alias": "news_a", "username": "investnews_kr", "enabled": True}]
     resolved_channels = [{"alias": "news_a", "entity": MagicMock(id=-100123), "enabled": True}]
     client = MagicMock()
@@ -24,7 +25,7 @@ async def test_run_realtime_builds_channel_map_and_starts_client():
          patch("src.run.resolve_channels", new_callable=AsyncMock, return_value=resolved_channels), \
          patch("src.run.setup_handlers") as mock_setup_handlers, \
          patch("src.run.run_client", new_callable=AsyncMock) as mock_run_client:
-        await run_realtime_mode(channels_path="channels.json")
+        await run_realtime_mode(channels_path="channels.json", workspace_dir="/workspace")
 
     mock_setup_handlers.assert_called_once()
     args, _ = mock_setup_handlers.call_args
@@ -38,7 +39,9 @@ async def test_run_batch_uses_configured_interval_and_metadata_path():
     config = {
         "phone": "+821012345678",
         "log_level": "INFO",
+        "log_dir": "logs",
         "data_dir": "data",
+        "session_dir": "session",
         "batch_interval_sec": 120,
     }
     client = MagicMock()
@@ -51,14 +54,19 @@ async def test_run_batch_uses_configured_interval_and_metadata_path():
          patch("src.run.create_client", return_value=client), \
          patch("src.run.start_client", new_callable=AsyncMock) as mock_start_client, \
          patch("src.run.run_periodic_batch", new_callable=AsyncMock) as mock_run_periodic_batch:
-        await run_batch_mode(channels_path="channels.json", metadata_path="data/_metadata.json")
+        await run_batch_mode(
+            channels_path="channels.json",
+            metadata_path="data/_metadata.json",
+            workspace_dir="/workspace",
+        )
 
+    expected_workspace = os.path.abspath("/workspace")
     mock_start_client.assert_awaited_once_with(client, phone="+821012345678")
     mock_run_periodic_batch.assert_awaited_once_with(
         client,
         enabled_channels,
-        metadata_path="data/_metadata.json",
-        data_dir="data",
+        metadata_path=os.path.normpath(os.path.join(expected_workspace, "data", "_metadata.json")),
+        data_dir=os.path.normpath(os.path.join(expected_workspace, "data")),
         interval_sec=120,
     )
 
@@ -76,6 +84,8 @@ def test_run_main_supports_mode_and_channels_file_args():
                 "channels.custom.json",
                 "--metadata-path",
                 "tmp/meta.json",
+                "--workspace",
+                "/workspace/project",
             ]
         )
 

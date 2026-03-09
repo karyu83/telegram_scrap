@@ -1,3 +1,4 @@
+import os
 import sys
 from unittest.mock import patch, MagicMock, AsyncMock
 
@@ -40,8 +41,8 @@ def test_session_file_in_session_directory():
 
         create_client(config)
 
-        session_path = MockClient.call_args[0][0]
-        assert session_path.startswith("session/")
+        session_path = os.path.normpath(MockClient.call_args[0][0])
+        assert os.path.dirname(session_path).endswith("session")
 
 
 @pytest.mark.asyncio
@@ -62,9 +63,6 @@ async def test_reuses_existing_session_without_reauth():
     mock_client.is_user_authorized = AsyncMock(return_value=True)
     mock_client.get_me = AsyncMock(return_value=MagicMock(first_name="Test"))
 
-    # start_client은 client.start()를 호출하고, Telethon은
-    # 세션 파일이 유효하면 내부적으로 재인증 없이 연결한다.
-    # 여기서는 start가 정상 호출되고 에러 없이 완료되는지 확인.
     await start_client(mock_client, phone="+821012345678")
 
     mock_client.start.assert_called_once_with(phone="+821012345678")

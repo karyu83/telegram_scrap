@@ -76,5 +76,37 @@ def add_channel(channels_path, alias, username=None, channel_id=None, enabled=Tr
     return new_entry
 
 
+def list_channels(channels_path):
+    config = _load_config(channels_path)
+    return config["channels"]
+
+
+def set_channel_enabled(channels_path, alias, enabled):
+    alias = _normalize_alias(alias)
+    config = _load_config(channels_path)
+
+    for channel in config["channels"]:
+        if channel.get("alias") == alias:
+            channel["enabled"] = bool(enabled)
+            _save_config(channels_path, config)
+            return channel
+
+    raise ValueError(f"alias not found: {alias}")
+
+
+def remove_channel(channels_path, alias):
+    alias = _normalize_alias(alias)
+    config = _load_config(channels_path)
+    channels = config["channels"]
+
+    for idx, channel in enumerate(channels):
+        if channel.get("alias") == alias:
+            removed = channels.pop(idx)
+            _save_config(channels_path, config)
+            return removed
+
+    raise ValueError(f"alias not found: {alias}")
+
+
 def load_channels_config(channels_path):
     return _load_config(channels_path)

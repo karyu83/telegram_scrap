@@ -15,7 +15,9 @@ def load_config():
         "phone": os.environ["TELEGRAM_PHONE"],
         "download_media": os.environ.get("DOWNLOAD_MEDIA", "true").lower() == "true",
         "log_level": os.environ.get("LOG_LEVEL", "INFO"),
+        "log_dir": os.environ.get("LOG_DIR", "logs"),
         "data_dir": os.environ.get("DATA_DIR", "data"),
+        "session_dir": os.environ.get("SESSION_DIR", "session"),
         "media_max_size_mb": int(os.environ.get("MEDIA_MAX_SIZE_MB", "50")),
         "batch_interval_sec": int(os.environ.get("BATCH_INTERVAL_SEC", "300")),
     }

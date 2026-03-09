@@ -477,3 +477,15 @@ telegram_scrap/
 ├── data/                   # 수집 데이터 (.gitignore)
 └── logs/                   # 로그 파일 (.gitignore)
 ```
+
+---
+
+## OpenClaw Docker Workspace
+
+If you run this project inside OpenClaw Docker (`~/.openclaw/workspace/...`), see `OPENCLAW.md` for workspace-safe commands:
+- runtime execution (`src.run` with `--workspace`)
+- log inspection (`src.log_cli`)
+- channel management (`src.channel_cli add/list/enable/disable/remove`)
+
+OpenClaw shortcut script:
+- `scripts/openclaw.sh` (run/logs/channel/test wrapper)

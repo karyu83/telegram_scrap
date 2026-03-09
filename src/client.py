@@ -1,14 +1,14 @@
 import logging
+import os
 
 from telethon import TelegramClient
 
 logger = logging.getLogger(__name__)
 
-SESSION_DIR = "session"
 
-
-def create_client(config):
-    session_path = f"{SESSION_DIR}/ticc_session"
+def create_client(config, session_dir="session"):
+    os.makedirs(session_dir, exist_ok=True)
+    session_path = os.path.join(session_dir, "ticc_session")
     client = TelegramClient(
         session_path,
         config["api_id"],

@@ -26,3 +26,31 @@ def test_channel_cli_add_command_updates_file():
     saved = json.loads(channels_path.read_text(encoding="utf-8"))
     assert saved["channels"][0]["alias"] == "news_a"
     assert saved["channels"][0]["username"] == "investnews_kr"
+
+
+def test_channel_cli_enable_disable_remove_commands():
+    tmp_dir = Path("tests") / ".tmp" / f"channel_cli_{uuid4().hex}"
+    tmp_dir.mkdir(parents=True, exist_ok=True)
+    channels_path = tmp_dir / "channels.json"
+
+    main([
+        "add",
+        "--channels-file",
+        str(channels_path),
+        "--alias",
+        "news_a",
+        "--username",
+        "investnews_kr",
+    ])
+
+    assert main(["disable", "--channels-file", str(channels_path), "--alias", "news_a"]) == 0
+    saved = json.loads(channels_path.read_text(encoding="utf-8"))
+    assert saved["channels"][0]["enabled"] is False
+
+    assert main(["enable", "--channels-file", str(channels_path), "--alias", "news_a"]) == 0
+    saved = json.loads(channels_path.read_text(encoding="utf-8"))
+    assert saved["channels"][0]["enabled"] is True
+
+    assert main(["remove", "--channels-file", str(channels_path), "--alias", "news_a"]) == 0
+    saved = json.loads(channels_path.read_text(encoding="utf-8"))
+    assert saved["channels"] == []

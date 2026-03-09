@@ -4,7 +4,7 @@ from uuid import uuid4
 
 import pytest
 
-from src.channel_registry import add_channel
+from src.channel_registry import add_channel, list_channels, remove_channel, set_channel_enabled
 
 
 def _make_workspace_tmp_dir():
@@ -88,3 +88,21 @@ def test_add_channel_rejects_duplicate_username_or_id():
             channel_id=-100111222333,
             enabled=True,
         )
+
+
+def test_list_enable_disable_remove_channel():
+    tmp_dir = _make_workspace_tmp_dir()
+    channels_path = tmp_dir / "channels.json"
+
+    add_channel(str(channels_path), alias="news_a", username="investnews_kr", enabled=True)
+
+    listed = list_channels(str(channels_path))
+    assert len(listed) == 1
+    assert listed[0]["enabled"] is True
+
+    updated = set_channel_enabled(str(channels_path), alias="news_a", enabled=False)
+    assert updated["enabled"] is False
+
+    removed = remove_channel(str(channels_path), alias="news_a")
+    assert removed["alias"] == "news_a"
+    assert list_channels(str(channels_path)) == []
